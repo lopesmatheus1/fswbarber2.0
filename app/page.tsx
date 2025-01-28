@@ -9,12 +9,14 @@ import {
   getPopularBarberShops,
 } from "./_data-access/barbershop/get-barbershop";
 import { quickSearchOption } from "./_constants/search";
+import Header from "./_components/header";
 
 export default async function Home() {
   const barbershops = await getBarberShops();
   const popularBarberShops = await getPopularBarberShops();
   return (
     <div>
+      <Header />
       <div className="space-y-4 p-5">
         <div>
           <h2 className="text-xl">
@@ -71,6 +73,7 @@ export default async function Home() {
           <div className="flex gap-4 overflow-x-auto [&::-webkit-scrollbar]:hidden">
             {barbershops.map((barbershop) => (
               <BarbershopItem
+                id={barbershop.id}
                 address={barbershop.address}
                 imageUrl={barbershop.imageUrl}
                 name={barbershop.name}
@@ -83,6 +86,7 @@ export default async function Home() {
           <div className="flex gap-4 overflow-x-auto [&::-webkit-scrollbar]:hidden">
             {popularBarberShops.map((barbershop) => (
               <BarbershopItem
+                id={barbershop.id}
                 address={barbershop.address}
                 imageUrl={barbershop.imageUrl}
                 name={barbershop.name}

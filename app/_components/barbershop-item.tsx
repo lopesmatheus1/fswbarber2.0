@@ -3,14 +3,21 @@ import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
 import { Card, CardContent } from "./ui/card";
 import Image from "next/image";
+import Link from "next/link";
 
 interface BarbershopItemProps {
   imageUrl: string;
   name: string;
   address: string;
+  id: string;
 }
 
-const BarbershopItem = ({ address, imageUrl, name }: BarbershopItemProps) => {
+const BarbershopItem = ({
+  id,
+  address,
+  imageUrl,
+  name,
+}: BarbershopItemProps) => {
   return (
     <Card className="relative min-w-[170px]">
       <CardContent className="h-full p-2">
@@ -32,8 +39,8 @@ const BarbershopItem = ({ address, imageUrl, name }: BarbershopItemProps) => {
           <p className="text-xs text-muted-foreground">{address}</p>
         </div>
 
-        <Button className="mt-3 w-full" variant={"secondary"}>
-          Reservar
+        <Button asChild className="mt-3 w-full" variant={"secondary"}>
+          <Link href={`/barbershop/${id}`}> Reservar</Link>
         </Button>
       </CardContent>
     </Card>
