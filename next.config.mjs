@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    domains: ["utfs.io"], // Adicione o domínio externo aqui
+    remotePatterns: [{ hostname: "utfs.io" }],
   },
 };
 

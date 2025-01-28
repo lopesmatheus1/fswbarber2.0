@@ -5,12 +5,16 @@ import { Search } from "lucide-react";
 import Image from "next/image";
 import BookingCard from "./_components/booking-card";
 import BarbershopItem from "./_components/barbershop-item";
+import {
+  getBarberShops,
+  getPopularBarberShops,
+} from "./_data-access/barbershop/get-barbershop";
 
-export default function Home() {
+export default async function Home() {
+  const barbershops = await getBarberShops();
+  const popularBarberShops = await getPopularBarberShops();
   return (
     <div>
-      <Header />
-
       <div className="space-y-4 p-5">
         <div>
           <h2 className="text-xl">
@@ -43,8 +47,29 @@ export default function Home() {
 
         {/* BABEARIAS */}
         <div>
-          <h2 className="mb-1 text-muted-foreground">Barbearias</h2>
-          <BarbershopItem />
+          <h2 className="mb-1 text-muted-foreground">Recomendados</h2>
+          <div className="flex gap-4 overflow-x-auto [&::-webkit-scrollbar]:hidden">
+            {barbershops.map((barbershop) => (
+              <BarbershopItem
+                address={barbershop.address}
+                imageUrl={barbershop.imageUrl}
+                name={barbershop.name}
+                key={barbershop.id}
+              />
+            ))}
+          </div>
+
+          <h2 className="mb-1 mt-2 text-muted-foreground">Populares</h2>
+          <div className="flex gap-4 overflow-x-auto [&::-webkit-scrollbar]:hidden">
+            {popularBarberShops.map((barbershop) => (
+              <BarbershopItem
+                address={barbershop.address}
+                imageUrl={barbershop.imageUrl}
+                name={barbershop.name}
+                key={barbershop.id}
+              />
+            ))}
+          </div>
         </div>
       </div>
     </div>
