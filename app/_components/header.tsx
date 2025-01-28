@@ -3,6 +3,8 @@ import Image from "next/image";
 import { MenuIcon } from "lucide-react";
 import { Button } from "./ui/button";
 import Link from "next/link";
+import { Sheet, SheetTrigger } from "./ui/sheet";
+import SidebarSheetContent from "./sidebar-sheet-content";
 
 const Header = () => {
   return (
@@ -17,9 +19,14 @@ const Header = () => {
           />
         </Link>
 
-        <Button variant={"ghost"} size={"icon"}>
-          <MenuIcon />
-        </Button>
+        <Sheet>
+          <SheetTrigger asChild>
+            <Button variant={"ghost"} size={"icon"}>
+              <MenuIcon />
+            </Button>
+          </SheetTrigger>
+          <SidebarSheetContent />
+        </Sheet>
       </CardContent>
     </Card>
   );
