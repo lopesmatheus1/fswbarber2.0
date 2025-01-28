@@ -4,6 +4,7 @@ import { Button } from "./_components/ui/button";
 import { Search } from "lucide-react";
 import Image from "next/image";
 import BookingCard from "./_components/booking-card";
+import BarbershopItem from "./_components/barbershop-item";
 
 export default function Home() {
   return (
@@ -34,9 +35,16 @@ export default function Home() {
           />
         </div>
 
+        {/* AGENDAMENTOS */}
         <div>
           <h2 className="mb-1 text-muted-foreground">Agendamentos</h2>
           <BookingCard />
+        </div>
+
+        {/* BABEARIAS */}
+        <div>
+          <h2 className="mb-1 text-muted-foreground">Barbearias</h2>
+          <BarbershopItem />
         </div>
       </div>
     </div>
