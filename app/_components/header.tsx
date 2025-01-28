@@ -1,4 +1,4 @@
-import { Card, CardContent, CardFooter } from "./ui/card";
+import { Card, CardContent } from "./ui/card";
 import Image from "next/image";
 import { MenuIcon } from "lucide-react";
 import { Button } from "./ui/button";

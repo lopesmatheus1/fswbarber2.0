@@ -1,13 +1,6 @@
-import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { Avatar, AvatarImage } from "./ui/avatar";
 import { Badge } from "./ui/badge";
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardContent,
-  CardFooter,
-} from "./ui/card";
+import { Card, CardContent } from "./ui/card";
 
 const BookingCard = () => {
   return (

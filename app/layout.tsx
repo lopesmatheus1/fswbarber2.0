@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
-import localFont from "next/font/local";
 import "./globals.css";
 import { Nunito } from "next/font/google";
+import Header from "./_components/header";
+import Footer from "./_components/footer";
 
 const nunito = Nunito({
   weight: ["200", "300", "400", "500", "600", "700", "800", "900", "1000"],
@@ -22,7 +23,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark">
-      <body className={`${nunito.className} antialiased`}>{children}</body>
+      <body className={`${nunito.className} antialiased`}>
+        <Header />
+        {children}
+        <Footer />
+      </body>
     </html>
   );
 }
