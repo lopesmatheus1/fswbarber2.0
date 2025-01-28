@@ -3,6 +3,7 @@ import { Input } from "@/app/_components/ui/input";
 import { Button } from "./_components/ui/button";
 import { Search } from "lucide-react";
 import Image from "next/image";
+import BookingCard from "./_components/booking-card";
 
 export default function Home() {
   return (
@@ -31,6 +32,11 @@ export default function Home() {
             className="rounded-xl object-cover"
             alt={"Agende nos melhores com FSW barber"}
           />
+        </div>
+
+        <div>
+          <h2 className="mb-1 text-muted-foreground">Agendamentos</h2>
+          <BookingCard />
         </div>
       </div>
     </div>
