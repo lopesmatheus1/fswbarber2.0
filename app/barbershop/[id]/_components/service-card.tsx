@@ -14,7 +14,7 @@ interface ServiceCardProps {
 const ServiceCard = ({ imageUrl, price, service, text }: ServiceCardProps) => {
   return (
     <Card>
-      <CardContent className="flex gap-3 p-3">
+      <CardContent className="flex gap-2 p-3">
         <div className="relative max-h-[110px] min-h-[110px] min-w-[110px] max-w-[110px]">
           <Image
             className="rounded-lg object-cover"
@@ -29,7 +29,7 @@ const ServiceCard = ({ imageUrl, price, service, text }: ServiceCardProps) => {
           <h2 className="text-sm font-bold">{service}</h2>
           <p className="text-sm text-muted-foreground">{text}</p>
           <div className="flex items-center justify-between">
-            <p className="font-semibold text-primary">
+            <p className="text-sm font-semibold text-primary">
               {formatCurrency(price)}
             </p>
             <Button variant={"secondary"} size={"sm"}>

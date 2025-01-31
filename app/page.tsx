@@ -12,6 +12,7 @@ import { quickSearchOption } from "./_constants/search";
 import Header from "./_components/header";
 
 import { auth } from "./_lib/auth";
+import SearchInput from "./_components/search";
 
 export default async function Home() {
   const barbershops = await getBarberShops();
@@ -41,12 +42,8 @@ export default async function Home() {
           </p>
         </div>
 
-        <div className="flex items-center justify-center gap-2">
-          <Input placeholder="Buscar Barbearias" />
-          <Button className="h-10 w-10">
-            <Search size={18} />
-          </Button>
-        </div>
+        {/* INPUT PARA BUSCA RÁPIDA */}
+        <SearchInput />
 
         {/* BUSCA RÁPIDA */}
         <div className="flex gap-2 overflow-x-scroll [&::-webkit-scrollbar]:hidden">

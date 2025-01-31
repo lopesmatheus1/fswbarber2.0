@@ -19,9 +19,9 @@ const BarbershopItem = ({
   name,
 }: BarbershopItemProps) => {
   return (
-    <Card className="relative min-w-[170px]">
+    <Card className="relative min-w-[130px]">
       <CardContent className="h-full p-2">
-        <div className="relative h-[160px] w-full">
+        <div className="relative max-h-[160px] min-h-[130px] w-full">
           <Image
             className="rounded-sm object-cover"
             src={imageUrl}
