@@ -11,18 +11,34 @@ import {
 import { quickSearchOption } from "./_constants/search";
 import Header from "./_components/header";
 
+import { auth } from "./_lib/auth";
+
 export default async function Home() {
   const barbershops = await getBarberShops();
   const popularBarberShops = await getPopularBarberShops();
+  const session = await auth();
+  const today = new Date();
   return (
     <div>
       <Header />
       <div className="space-y-4 p-5">
         <div>
           <h2 className="text-xl">
-            Olá, <span className="font-bold">Matheus</span>
+            Olá,{" "}
+            <span className="font-bold">
+              {session?.user?.name?.split(" ")[0]}
+            </span>
           </h2>
-          <p>Terça, 27 de janeiro</p>
+          <p>
+            {new Intl.DateTimeFormat("pt-BR", { weekday: "long" }).format(
+              today,
+            )}
+            ,{" "}
+            {new Intl.DateTimeFormat("pt-BR", {
+              day: "numeric",
+              month: "long",
+            }).format(today)}
+          </p>
         </div>
 
         <div className="flex items-center justify-center gap-2">
