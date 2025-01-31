@@ -1,6 +1,4 @@
-import { Input } from "@/app/_components/ui/input";
 import { Button } from "./_components/ui/button";
-import { Search } from "lucide-react";
 import Image from "next/image";
 import BookingCard from "./_components/booking-card";
 import BarbershopItem from "./_components/barbershop-item";
@@ -10,9 +8,9 @@ import {
 } from "./_data-access/barbershop/get-barbershop";
 import { quickSearchOption } from "./_constants/search";
 import Header from "./_components/header";
-
 import { auth } from "./_lib/auth";
 import SearchInput from "./_components/search";
+import Link from "next/link";
 
 export default async function Home() {
   const barbershops = await getBarberShops();
@@ -49,17 +47,20 @@ export default async function Home() {
         <div className="flex gap-2 overflow-x-scroll [&::-webkit-scrollbar]:hidden">
           {quickSearchOption.map((quickSearch) => (
             <Button
+              asChild
               className="gap-2"
               variant={"secondary"}
               key={quickSearch.title}
             >
-              <Image
-                src={quickSearch.imageUrl}
-                width={16}
-                height={16}
-                alt={quickSearch.title}
-              />
-              <p>{quickSearch.title}</p>
+              <Link href={`/barbershop?service=${quickSearch.title}`}>
+                <Image
+                  src={quickSearch.imageUrl}
+                  width={16}
+                  height={16}
+                  alt={quickSearch.title}
+                />
+                <p>{quickSearch.title}</p>
+              </Link>
             </Button>
           ))}
         </div>

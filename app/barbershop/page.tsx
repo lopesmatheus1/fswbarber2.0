@@ -2,7 +2,7 @@ import BarbershopItem from "../_components/barbershop-item";
 import Header from "../_components/header";
 import SearchInput from "../_components/search";
 import { searchBarbershop } from "../_data-access/barbershop/search-barbershop";
-import { db } from "../_lib/prisma";
+
 
 interface BarbershopsProps {
   searchParams: {
@@ -27,7 +27,7 @@ const Barbershops = async ({ searchParams }: BarbershopsProps) => {
 
       <div className="px-5">
         <h2 className="text-muted-foreground">
-          Resultado para &quot;{searchParams?.title}
+          Resultado para &quot;{searchParams?.title || searchParams?.service}
           &quot;
         </h2>
       </div>
