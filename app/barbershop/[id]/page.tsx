@@ -1,12 +1,12 @@
 import { Button } from "@/app/_components/ui/button";
 import { getUniqueBarberShop } from "@/app/_data-access/barbershop/get-barbershop";
 import Image from "next/image";
-import { ChevronLeft, MenuIcon, } from "lucide-react";
+import { ChevronLeft } from "lucide-react";
 import Link from "next/link";
-import { Sheet, SheetTrigger } from "@/app/_components/ui/sheet";
-import SidebarSheetContent from "@/app/_components/sidebar-sheet-content";
+
 import ServiceCard from "./_components/service-card";
 import CellphoneItem from "./_components/cellphone-item";
+import SidebarSheet from "@/app/_components/sidebar-sheet-content";
 
 interface BarbershopPageProps {
   params: {
@@ -39,18 +39,7 @@ const BarbershopPage = async ({ params }: BarbershopPageProps) => {
           </Link>
         </Button>
 
-        <Sheet>
-          <SheetTrigger asChild>
-            <Button
-              className="z-200 absolute right-3 top-3 p-0"
-              variant={"secondary"}
-              size={"icon"}
-            >
-              <MenuIcon size={20} />
-            </Button>
-          </SheetTrigger>
-          <SidebarSheetContent />
-        </Sheet>
+        <SidebarSheet />
       </div>
 
       {/* INFORMAÇÕES */}
@@ -89,6 +78,9 @@ const BarbershopPage = async ({ params }: BarbershopPageProps) => {
         <div className="space-y-3">
           {barbershop.services.map((serivce) => (
             <ServiceCard
+              key={serivce.id}
+              serviceId={serivce.id}
+              barbershopName={barbershop.name}
               imageUrl={serivce.imageUrl}
               service={serivce.name}
               text={serivce.description}
