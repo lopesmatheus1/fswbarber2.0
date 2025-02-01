@@ -3,7 +3,6 @@ import { getUniqueBarberShop } from "@/app/_data-access/barbershop/get-barbersho
 import Image from "next/image";
 import { ChevronLeft } from "lucide-react";
 import Link from "next/link";
-
 import ServiceCard from "./_components/service-card";
 import CellphoneItem from "./_components/cellphone-item";
 import SidebarSheet from "@/app/_components/sidebar-sheet-content";
@@ -16,7 +15,7 @@ interface BarbershopPageProps {
 
 const BarbershopPage = async ({ params }: BarbershopPageProps) => {
   const barbershop = await getUniqueBarberShop(params.id);
-
+  
   if (!barbershop) return;
   return (
     <div>

@@ -5,20 +5,22 @@ import { formatCurrency } from "@/app/_helpers/currency";
 import Image from "next/image";
 import {
   Sheet,
-  SheetClose,
   SheetContent,
   SheetFooter,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
 } from "@/app/_components/ui/sheet";
-import { useMemo, useState } from "react";
 import { Calendar } from "@/app/_components/ui/calendar";
 import { ptBR } from "date-fns/locale";
 import { format, set } from "date-fns";
+import { useSession } from "next-auth/react";
+import SignInDialog from "@/app/_components/sign-in-dialog";
+import { Booking } from "@prisma/client";
+import { useEffect, useMemo, useState } from "react";
+import { getBookings } from "@/app/_data-actions/booking/get-bookings";
 import { createBooking } from "@/app/_data-actions/booking/create-booking";
 import { toast } from "sonner";
-import { useSession } from "next-auth/react";
 
 interface ServiceCardProps {
   imageUrl: string;
@@ -61,31 +63,73 @@ const ServiceCard = ({
   text,
   serviceId,
 }: ServiceCardProps) => {
+  //atualizar a lista de horarios
+  //não permetir que usários que não estejam logados façam reservas
+
   const { data } = useSession();
   const [selectedDay, setSelectedDay] = useState<Date | undefined>(undefined);
   const [selectedTime, setSelectedTime] = useState<string | undefined>(
     undefined,
   );
-  const handleDateSelect = (date: Date | undefined) => {
-    setSelectedDay(date);
+  const [sheetIsOpen, setSheetIsOpen] = useState(false);
+
+  //FETCH DOS AGENDAMENTOS
+  const [dayBookings, setDayBookings] = useState<Booking[]>([]);
+  useEffect(() => {
+    if (!selectedDay) return;
+    const fetch = async () => {
+      const bookings = await getBookings({
+        date: selectedDay,
+        serviceId,
+      });
+      setDayBookings(bookings);
+    };
+    fetch();
+  }, [selectedDay, serviceId]);
+
+  const GetTimeList = (bookings: Booking[]) => {
+    return TIME_LIST.filter((TIME) => {
+      const minute = Number(TIME.split(":")[1]);
+      const hour = Number(TIME.split(":")[0]);
+      const hasBookingOnCurrentTime = bookings.some(
+        (booking) =>
+          booking.date.getHours() === hour &&
+          booking.date.getMinutes() === minute,
+      );
+
+      if (hasBookingOnCurrentTime) {
+        return false;
+      }
+      return true;
+    });
   };
-  const handleTimeSelect = (time: string) => {
-    setSelectedTime(time);
+
+  const newDay = useMemo(() => {
+    if (!selectedTime || !selectedDay) return;
+    const hour = Number(selectedTime.split(":")[0]);
+    const minute = Number(selectedTime.split(":")[1]);
+    return set(selectedDay, {
+      minutes: minute,
+      hours: hour,
+    });
+  }, [selectedDay, selectedTime]);
+
+  const handleBookingSheetOpenChange = () => {
+    setSelectedDay(undefined);
+    setSelectedTime(undefined);
+    setDayBookings([]);
+    setSheetIsOpen(false);
   };
+
   const handleCreateBooking = async () => {
     try {
-      if (!selectedDay || !selectedTime) return;
-      const hour = Number(selectedTime.split(":")[0]);
-      const minute = Number(selectedTime.split(":")[1]);
-      const newDate = set(selectedDay, {
-        minutes: minute,
-        hours: hour,
-      });
+      if (!newDay) return;
       await createBooking({
         serviceId: serviceId,
         userId: data?.user?.id as any,
-        date: newDate,
+        date: newDay,
       });
+      handleBookingSheetOpenChange();
       toast.success("Reserva criada com sucesso!");
     } catch (error) {
       console.error(error);
@@ -113,110 +157,133 @@ const ServiceCard = ({
               {formatCurrency(price)}
             </p>
 
-            <Sheet>
+            <Sheet open={sheetIsOpen} onOpenChange={setSheetIsOpen}>
               <SheetTrigger asChild>
-                <Button variant={"secondary"} size={"sm"}>
+                <Button
+                  onClick={handleBookingSheetOpenChange}
+                  variant={"secondary"}
+                  size={"sm"}
+                >
                   Reservar
                 </Button>
               </SheetTrigger>
-              <SheetContent>
-                <SheetHeader>
-                  <SheetTitle>Fazer reserva</SheetTitle>
-                </SheetHeader>
+              {data?.user ? (
+                <SheetContent>
+                  <SheetHeader>
+                    <SheetTitle>Fazer reserva</SheetTitle>
+                  </SheetHeader>
 
-                <div className="mt-5 border-y border-solid py-5">
-                  <Calendar
-                    mode="single"
-                    locale={ptBR}
-                    selected={selectedDay}
-                    onSelect={handleDateSelect}
-                    fromDate={new Date()}
-                    styles={{
-                      head_cell: {
-                        width: "100%",
-                        textTransform: "capitalize",
-                      },
-                      cell: {
-                        width: "100%",
-                      },
-                      button: {
-                        width: "100%",
-                      },
-                      nav_button_previous: {
-                        width: "32px",
-                        height: "32px",
-                      },
-                      nav_button_next: {
-                        width: "32px",
-                        height: "32px",
-                      },
-                      caption: {
-                        textTransform: "capitalize",
-                      },
-                    }}
-                  />
-                </div>
-
-                {selectedDay ? (
-                  <div className="flex w-full flex-row gap-3 overflow-x-auto border-b border-solid py-5 [&::-webkit-scrollbar]:hidden">
-                    {TIME_LIST.map((time) => (
-                      <Button
-                        key={time}
-                        onClick={() => handleTimeSelect(time)}
-                        variant={selectedTime === time ? "default" : "outline"}
-                        className="rounded-full"
-                      >
-                        {time}
-                      </Button>
-                    ))}
+                  <div className="mt-5 border-y border-solid py-5">
+                    <Calendar
+                      mode="single"
+                      locale={ptBR}
+                      selected={selectedDay}
+                      onSelect={setSelectedDay}
+                      fromDate={new Date()}
+                      styles={{
+                        head_cell: {
+                          width: "100%",
+                          textTransform: "capitalize",
+                        },
+                        cell: {
+                          width: "100%",
+                        },
+                        button: {
+                          width: "100%",
+                        },
+                        nav_button_previous: {
+                          width: "32px",
+                          height: "32px",
+                        },
+                        nav_button_next: {
+                          width: "32px",
+                          height: "32px",
+                        },
+                        caption: {
+                          textTransform: "capitalize",
+                        },
+                      }}
+                    />
                   </div>
-                ) : (
-                  ""
-                )}
 
-                {selectedDay && selectedTime && (
-                  <Card className="my-5">
-                    <CardContent className="p-0">
-                      <CardHeader className="px-5 py-2">
-                        <div className="flex w-full items-center justify-between font-bold">
-                          <h2>{service}</h2>
-                          <p className="text-sm">{formatCurrency(price)}</p>
+                  {selectedDay ? (
+                    <div className="flex w-full flex-row gap-3 overflow-x-auto border-b border-solid py-5 [&::-webkit-scrollbar]:hidden">
+                      {GetTimeList(dayBookings).map((time) => (
+                        <Button
+                          key={time}
+                          onClick={() => setSelectedTime(time)}
+                          variant={
+                            selectedTime === time ? "default" : "outline"
+                          }
+                          className="rounded-full"
+                        >
+                          {time}
+                        </Button>
+                      ))}
+                    </div>
+                  ) : (
+                    ""
+                  )}
+
+                  {selectedDay && selectedTime && (
+                    <Card className="my-5">
+                      <CardContent className="p-0">
+                        <CardHeader className="px-5 py-2">
+                          <div className="flex w-full items-center justify-between font-bold">
+                            <h2>{service}</h2>
+                            <p className="text-sm">{formatCurrency(price)}</p>
+                          </div>
+                        </CardHeader>
+
+                        <div className="mb-2 flex items-center justify-between px-5">
+                          <p className="text-sm text-muted-foreground">Data</p>
+                          <p className="text-end">
+                            {format(selectedDay, "d 'De' MMMM", {
+                              locale: ptBR,
+                            })}
+                          </p>
                         </div>
-                      </CardHeader>
 
-                      <div className="mb-2 flex items-center justify-between px-5">
-                        <p className="text-sm text-muted-foreground">Data</p>
-                        <p className="text-end">
-                          {format(selectedDay, "d 'De' MMMM", { locale: ptBR })}
-                        </p>
-                      </div>
+                        <div className="mb-2 flex items-center justify-between px-5">
+                          <p className="text-sm text-muted-foreground">Data</p>
+                          <p>{selectedTime}</p>
+                        </div>
 
-                      <div className="mb-2 flex items-center justify-between px-5">
-                        <p className="text-sm text-muted-foreground">Data</p>
-                        <p>{selectedTime}</p>
-                      </div>
+                        <div className="mb-2 flex items-center justify-between px-5">
+                          <p className="text-sm text-muted-foreground">
+                            Barbearia
+                          </p>
+                          <p className="text-end">{barbershopName}</p>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  )}
 
-                      <div className="mb-2 flex items-center justify-between px-5">
-                        <p className="text-sm text-muted-foreground">
-                          Barbearia
-                        </p>
-                        <p className="text-end">{barbershopName}</p>
-                      </div>
-                    </CardContent>
-                  </Card>
-                )}
+                  {selectedDay && selectedTime && (
+                    <SheetFooter>
+                      <Button
+                        onClick={handleCreateBooking}
+                        disabled={!selectedDay || !selectedTime}
+                      >
+                        Confirmar
+                      </Button>
+                    </SheetFooter>
+                  )}
+                </SheetContent>
+              ) : (
+                <SheetContent>
+                  <SheetHeader>
+                    <SheetTitle className="text-left">
+                      Para continuar com a reserva, faça login
+                    </SheetTitle>
+                  </SheetHeader>
 
-                {selectedDay && selectedTime && (
-                  <SheetFooter>
-                    <Button
-                      onClick={handleCreateBooking}
-                      disabled={!selectedDay || !selectedTime}
-                    >
-                      Confirmar
-                    </Button>
-                  </SheetFooter>
-                )}
-              </SheetContent>
+                  <div className="flex w-full items-center justify-between py-5">
+                    <p>Entrar </p>
+                    <SignInDialog />
+                  </div>
+                </SheetContent>
+              )}
             </Sheet>
           </div>
         </div>
