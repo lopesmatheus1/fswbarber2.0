@@ -3,12 +3,12 @@
 import { db } from "@/app/_lib/prisma";
 import { endOfDay, startOfDay } from "date-fns";
 
-interface GetBookingsProps {
+interface getBookingsTimeProps {
   date: Date;
   serviceId: string;
 }
 
-export const getBookings = ({ date }: GetBookingsProps) => {
+export const getBookingsTime = ({ date }: getBookingsTimeProps) => {
   return db.booking.findMany({
     where: {
       date: {

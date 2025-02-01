@@ -1,5 +1,5 @@
 "use client";
-import { LogOutIcon, MenuIcon } from "lucide-react";
+import { LogInIcon, LogOutIcon, MenuIcon } from "lucide-react";
 import { quickSearchOption } from "../_constants/search";
 import { Button } from "./ui/button";
 import {
@@ -10,11 +10,12 @@ import {
   SheetTrigger,
 } from "./ui/sheet";
 import Image from "next/image";
-import { Avatar, AvatarImage } from "./ui/avatar";
-import SignInDialog from "./sign-in-dialog";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import SignInDialogContent from "./sign-in-dialog";
 import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { useState } from "react";
+import { Dialog, DialogTrigger } from "./ui/dialog";
 
 const SidebarSheet = () => {
   const { data } = useSession();
@@ -37,13 +38,23 @@ const SidebarSheet = () => {
           {!data?.user ? (
             <div className="flex w-full items-center justify-between">
               <p>Olá, faça seu login! </p>
-              <SignInDialog />
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button className="h-8 w-8">
+                    <LogInIcon size={18} />
+                  </Button>
+                </DialogTrigger>
+                <SignInDialogContent />
+              </Dialog>
             </div>
           ) : (
             <>
               <div className="rounded-full bg-primary p-0.5">
                 <Avatar>
                   <AvatarImage src={data?.user?.image ?? ""} />
+                  <AvatarFallback>
+                    {data.user.name?.split("")[0]}
+                  </AvatarFallback>
                 </Avatar>
               </div>
               <div>
@@ -60,14 +71,16 @@ const SidebarSheet = () => {
             <p>Ínicio</p>
           </Button>
 
-          <Button className="w-full justify-start" variant={"ghost"}>
-            <Image
-              src={"/calendar.svg"}
-              height={16}
-              width={16}
-              alt={"Agendamentos"}
-            />
-            <p>Agendamentos</p>
+          <Button asChild className="w-full justify-start" variant={"ghost"}>
+            <Link href={"/booking"}>
+              <Image
+                src={"/calendar.svg"}
+                height={16}
+                width={16}
+                alt={"Agendamentos"}
+              />
+              <p>Agendamentos</p>
+            </Link>
           </Button>
         </div>
 

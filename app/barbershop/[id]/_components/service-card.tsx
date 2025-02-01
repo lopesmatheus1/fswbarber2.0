@@ -15,12 +15,14 @@ import { Calendar } from "@/app/_components/ui/calendar";
 import { ptBR } from "date-fns/locale";
 import { format, set } from "date-fns";
 import { useSession } from "next-auth/react";
-import SignInDialog from "@/app/_components/sign-in-dialog";
 import { Booking } from "@prisma/client";
 import { useEffect, useMemo, useState } from "react";
-import { getBookings } from "@/app/_data-actions/booking/get-bookings";
+import { getBookingsTime } from "@/app/_data-actions/booking/get-bookings";
 import { createBooking } from "@/app/_data-actions/booking/create-booking";
 import { toast } from "sonner";
+import { Dialog, DialogTrigger } from "@/app/_components/ui/dialog";
+import { LogInIcon } from "lucide-react";
+import SignInDialogContent from "@/app/_components/sign-in-dialog";
 
 interface ServiceCardProps {
   imageUrl: string;
@@ -63,9 +65,6 @@ const ServiceCard = ({
   text,
   serviceId,
 }: ServiceCardProps) => {
-  //atualizar a lista de horarios
-  //não permetir que usários que não estejam logados façam reservas
-
   const { data } = useSession();
   const [selectedDay, setSelectedDay] = useState<Date | undefined>(undefined);
   const [selectedTime, setSelectedTime] = useState<string | undefined>(
@@ -73,12 +72,12 @@ const ServiceCard = ({
   );
   const [sheetIsOpen, setSheetIsOpen] = useState(false);
 
-  //FETCH DOS AGENDAMENTOS
+  // FETCH DOS AGENDAMENTOS
   const [dayBookings, setDayBookings] = useState<Booking[]>([]);
   useEffect(() => {
     if (!selectedDay) return;
     const fetch = async () => {
-      const bookings = await getBookings({
+      const bookings = await getBookingsTime({
         date: selectedDay,
         serviceId,
       });
@@ -87,6 +86,9 @@ const ServiceCard = ({
     fetch();
   }, [selectedDay, serviceId]);
 
+  {
+    /*FUNÇAO QUE PEGA AS LISTA DE HORÁRIOS DISPONIVEL*/
+  }
   const GetTimeList = (bookings: Booking[]) => {
     return TIME_LIST.filter((TIME) => {
       const minute = Number(TIME.split(":")[1]);
@@ -104,6 +106,9 @@ const ServiceCard = ({
     });
   };
 
+  {
+    /*FUNÇÃO PARA RETORNAR O DIA SELECECIONADO, COM HORA E MINUTO*/
+  }
   const newDay = useMemo(() => {
     if (!selectedTime || !selectedDay) return;
     const hour = Number(selectedTime.split(":")[0]);
@@ -114,6 +119,9 @@ const ServiceCard = ({
     });
   }, [selectedDay, selectedTime]);
 
+  {
+    /*RESETA OS STATES QUANDO O USUÁRIO FECHA O SHEET*/
+  }
   const handleBookingSheetOpenChange = () => {
     setSelectedDay(undefined);
     setSelectedTime(undefined);
@@ -121,6 +129,9 @@ const ServiceCard = ({
     setSheetIsOpen(false);
   };
 
+  {
+    /*SERVER ACTION PARA CRIAR UM AGENDAMENTO NO BANCO*/
+  }
   const handleCreateBooking = async () => {
     try {
       if (!newDay) return;
@@ -280,7 +291,14 @@ const ServiceCard = ({
 
                   <div className="flex w-full items-center justify-between py-5">
                     <p>Entrar </p>
-                    <SignInDialog />
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button className="h-8 w-8">
+                          <LogInIcon size={18} />
+                        </Button>
+                      </DialogTrigger>
+                      <SignInDialogContent />
+                    </Dialog>
                   </div>
                 </SheetContent>
               )}

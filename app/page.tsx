@@ -11,12 +11,15 @@ import Header from "./_components/header";
 import { auth } from "./_lib/auth";
 import SearchInput from "./_components/search";
 import Link from "next/link";
+import { getBookings } from "./_data-access/booking/get-bookings";
 
 export default async function Home() {
   const barbershops = await getBarberShops();
   const popularBarberShops = await getPopularBarberShops();
   const session = await auth();
   const today = new Date();
+  const bookings = await getBookings();
+
   return (
     <div>
       <Header />
@@ -76,10 +79,19 @@ export default async function Home() {
         </div>
 
         {/* AGENDAMENTOS */}
-        <div>
-          <h2 className="mb-1 text-muted-foreground">Agendamentos</h2>
-          <BookingCard />
-        </div>
+
+        {session ? (
+          <div>
+            <h2 className="mb-1 text-muted-foreground">Agendamentos</h2>{" "}
+            <div className="flex gap-3 overflow-x-auto [&::-webkit-scrollbar]:hidden">
+              {bookings.map((booking) => (
+                <BookingCard booking={booking} key={booking.id} />
+              ))}
+            </div>
+          </div>
+        ) : (
+          ""
+        )}
 
         {/* BABEARIAS */}
         <div>
