@@ -53,7 +53,7 @@ const Bookings = async () => {
         </div>
       )}
 
-      {/* CARD DOS AGENDAMENTOS */}
+    
     </div>
   );
 };
