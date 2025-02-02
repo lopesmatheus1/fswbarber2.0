@@ -1,3 +1,4 @@
+"use client";
 import { format, isFuture } from "date-fns";
 import { Avatar, AvatarImage } from "./ui/avatar";
 import { Badge } from "./ui/badge";
@@ -17,6 +18,9 @@ import Image from "next/image";
 import BookingSummaryContent from "./booking-summary";
 import CellphoneItem from "./cellphone-item";
 import { Button } from "./ui/button";
+import { Dialog, DialogTrigger } from "./ui/dialog";
+import DeleteBookingContent from "./delete-booking-content";
+import { useState } from "react";
 
 interface BookingCardProps {
   booking: Prisma.BookingGetPayload<{
@@ -27,8 +31,11 @@ interface BookingCardProps {
 const BookingCard = ({ booking }: BookingCardProps) => {
   const date = new Date(booking.date);
   const isConfirmed = isFuture(date);
+  const [sheetIsOpen, setSheetIsOpen] = useState(false);
+  const isOnThePast = date < new Date();
+
   return (
-    <Sheet>
+    <Sheet open={sheetIsOpen} onOpenChange={setSheetIsOpen}>
       <SheetTrigger className="w-full">
         <Card className="min-w-[85%]">
           <CardContent className="flex justify-between p-0">
@@ -59,20 +66,37 @@ const BookingCard = ({ booking }: BookingCardProps) => {
           </CardContent>
         </Card>
       </SheetTrigger>
-      <SheetContent className="flex flex-col justify-between p-5">
+      <SheetContent className="flex w-[90%] flex-col justify-between p-5">
         <div>
           <SheetHeader className="border-b border-solid">
             <SheetTitle>Informações da reserva</SheetTitle>
           </SheetHeader>
 
           <div className="py-5">
-            <div className="relative h-[180px] w-full">
+            <div className="relative flex h-[180px] w-full items-end">
               <Image
+                className="object-cover"
                 src={"/map.png"}
                 alt={"Mapa da localidade da barbearia"}
                 fill
                 quality={100}
               />
+              <Card className="z-50 mx-4 mb-3 w-full">
+                <CardContent className="flex items-center gap-2 px-5 py-3">
+                  <Avatar>
+                    <AvatarImage src={booking.service.barbershop.imageUrl} />
+                  </Avatar>
+
+                  <div>
+                    <h3 className="text-sm font-bold">
+                      {booking.service.barbershop.name}
+                    </h3>
+                    <p className="text-sm">
+                      {booking.service.barbershop.address}
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
             </div>
           </div>
 
@@ -99,9 +123,22 @@ const BookingCard = ({ booking }: BookingCardProps) => {
           <SheetClose asChild>
             <Button className="w-full">Voltar</Button>
           </SheetClose>
-          <Button variant={"destructive"} className="w-full">
-            Cancelar reserva
-          </Button>
+
+          {isOnThePast ? (
+            ""
+          ) : (
+            <Dialog>
+              <DialogTrigger>
+                <Button variant={"destructive"} className="w-full">
+                  Cancelar reserva
+                </Button>
+              </DialogTrigger>
+              <DeleteBookingContent
+                closeSheet={setSheetIsOpen}
+                id={booking.id}
+              />
+            </Dialog>
+          )}
         </SheetFooter>
       </SheetContent>
     </Sheet>

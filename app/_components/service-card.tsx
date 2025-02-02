@@ -1,6 +1,6 @@
 "use client";
 import { Button } from "@/app/_components/ui/button";
-import { Card, CardContent, CardHeader } from "@/app/_components/ui/card";
+import { Card, CardContent } from "@/app/_components/ui/card";
 import { formatCurrency } from "@/app/_helpers/currency";
 import Image from "next/image";
 import {
@@ -13,7 +13,7 @@ import {
 } from "@/app/_components/ui/sheet";
 import { Calendar } from "@/app/_components/ui/calendar";
 import { ptBR } from "date-fns/locale";
-import { format, set } from "date-fns";
+import { set } from "date-fns";
 import { useSession } from "next-auth/react";
 import { Booking } from "@prisma/client";
 import { useEffect, useMemo, useState } from "react";
@@ -23,6 +23,7 @@ import { toast } from "sonner";
 import { Dialog, DialogTrigger } from "@/app/_components/ui/dialog";
 import { LogInIcon } from "lucide-react";
 import SignInDialogContent from "@/app/_components/sign-in-dialog";
+import BookingSummaryContent from "./booking-summary";
 
 interface ServiceCardProps {
   imageUrl: string;
@@ -71,6 +72,7 @@ const ServiceCard = ({
     undefined,
   );
   const [sheetIsOpen, setSheetIsOpen] = useState(false);
+  const [disableButton, setDisableButton] = useState(false);
 
   // FETCH DOS AGENDAMENTOS
   const [dayBookings, setDayBookings] = useState<Booking[]>([]);
@@ -134,14 +136,15 @@ const ServiceCard = ({
   }
   const handleCreateBooking = async () => {
     try {
+      setDisableButton(true);
       if (!newDay) return;
       await createBooking({
         serviceId: serviceId,
-        userId: data?.user?.id as any,
         date: newDay,
       });
       handleBookingSheetOpenChange();
       toast.success("Reserva criada com sucesso!");
+      setDisableButton(false);
     } catch (error) {
       console.error(error);
       toast.error("Erro ao criar reserva!");
@@ -238,35 +241,12 @@ const ServiceCard = ({
 
                   {selectedDay && selectedTime && (
                     <Card className="my-5">
-                      <CardContent className="p-0">
-                        <CardHeader className="px-5 py-2">
-                          <div className="flex w-full items-center justify-between font-bold">
-                            <h2>{service}</h2>
-                            <p className="text-sm">{formatCurrency(price)}</p>
-                          </div>
-                        </CardHeader>
-
-                        <div className="mb-2 flex items-center justify-between px-5">
-                          <p className="text-sm text-muted-foreground">Data</p>
-                          <p className="text-end">
-                            {format(selectedDay, "d 'De' MMMM", {
-                              locale: ptBR,
-                            })}
-                          </p>
-                        </div>
-
-                        <div className="mb-2 flex items-center justify-between px-5">
-                          <p className="text-sm text-muted-foreground">Data</p>
-                          <p>{selectedTime}</p>
-                        </div>
-
-                        <div className="mb-2 flex items-center justify-between px-5">
-                          <p className="text-sm text-muted-foreground">
-                            Barbearia
-                          </p>
-                          <p className="text-end">{barbershopName}</p>
-                        </div>
-                      </CardContent>
+                      <BookingSummaryContent
+                        barbershopName={barbershopName}
+                        service={service}
+                        price={price}
+                        selectedDay={selectedDay}
+                      />
                     </Card>
                   )}
 
@@ -274,7 +254,9 @@ const ServiceCard = ({
                     <SheetFooter>
                       <Button
                         onClick={handleCreateBooking}
-                        disabled={!selectedDay || !selectedTime}
+                        disabled={
+                          !selectedDay || !selectedTime || disableButton
+                        }
                       >
                         Confirmar
                       </Button>

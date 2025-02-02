@@ -22,18 +22,28 @@ const Bookings = async () => {
       {session ? (
         <div className="mb-5 px-4">
           <h2 className="mb-1 font-bold text-muted-foreground">Confirmados</h2>
-          <div className="mb-5 space-y-3">
-            {bookings.map((booking) => (
-              <BookingCard key={booking.id} booking={booking} />
-            ))}
-          </div>
+          {bookings.length > 0 ? (
+            <div className="mb-5 space-y-3">
+              {bookings.map((booking) => (
+                <BookingCard key={booking.id} booking={booking} />
+              ))}
+            </div>
+          ) : (
+            <p className="mb-3 font-semibold">
+              Você não tem reservas confirmadas
+            </p>
+          )}
 
           <h2 className="mb-1 font-bold text-muted-foreground">Finalizados</h2>
-          <div className="space-y-3">
-            {pastBookings.map((booking) => (
-              <BookingCard key={booking.id} booking={booking} />
-            ))}
-          </div>
+          {pastBookings.length > 0 ? (
+            <div className="space-y-3">
+              {pastBookings.map((booking) => (
+                <BookingCard key={booking.id} booking={booking} />
+              ))}
+            </div>
+          ) : (
+            <p>Você não tem reservas concluídas</p>
+          )}
         </div>
       ) : (
         <div className="space-y-2 p-5">
@@ -52,8 +62,6 @@ const Bookings = async () => {
           </Dialog>
         </div>
       )}
-
-    
     </div>
   );
 };

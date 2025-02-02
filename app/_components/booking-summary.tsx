@@ -1,6 +1,6 @@
 import { formatCurrency } from "@/app/_helpers/currency";
 import { ptBR } from "date-fns/locale";
-import { CardHeader } from "./ui/card";
+import { CardContent, CardHeader } from "./ui/card";
 import { format } from "date-fns";
 
 interface BookingSummaryProps {
@@ -17,7 +17,7 @@ const BookingSummaryContent = ({
   selectedDay,
 }: BookingSummaryProps) => {
   return (
-    <>
+    <CardContent className="p-0">
       <CardHeader className="px-5 py-2">
         <div className="flex w-full items-center justify-between font-bold">
           <h2 className="text-sm font-bold">{service}</h2>
@@ -40,7 +40,7 @@ const BookingSummaryContent = ({
         <p className="text-muted-foreground">Barbearia</p>
         <p className="text-end">{barbershopName}</p>
       </div>
-    </>
+    </CardContent>
   );
 };
 
