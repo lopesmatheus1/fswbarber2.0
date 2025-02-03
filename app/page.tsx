@@ -26,12 +26,13 @@ export default async function Home() {
       <div className="space-y-4 p-5">
         <div>
           <h2 className="text-xl">
-            Olá,{" "}
+            Olá,
             <span className="font-bold">
-              {session?.user?.name?.split(" ")[0]}
+              {session?.user ? session?.user?.name?.split(" ")[0] : "bem vindo"}
+              !
             </span>
           </h2>
-          <p>
+          <p className="capitalize">
             {new Intl.DateTimeFormat("pt-BR", { weekday: "long" }).format(
               today,
             )}
