@@ -83,12 +83,19 @@ export default async function Home() {
 
         {session ? (
           <div>
-            <h2 className="mb-1 text-muted-foreground">Agendamentos</h2>{" "}
-            <div className="flex gap-3 overflow-x-auto [&::-webkit-scrollbar]:hidden">
-              {bookings.map((booking) => (
-                <BookingCard booking={booking} key={booking.id} />
-              ))}
-            </div>
+            {bookings.length > 0 && (
+              <>
+                <h2 className="mb-1 text-muted-foreground">Agendamentos</h2>{" "}
+                <div className="flex gap-3 overflow-x-auto [&::-webkit-scrollbar]:hidden">
+                  {bookings.map((booking) => (
+                    <BookingCard
+                      booking={JSON.parse(JSON.stringify(booking))}
+                      key={booking.id}
+                    />
+                  ))}
+                </div>
+              </>
+            )}
           </div>
         ) : (
           ""
