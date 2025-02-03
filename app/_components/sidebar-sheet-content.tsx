@@ -66,9 +66,16 @@ const SidebarSheet = () => {
         </div>
 
         <div className="flex flex-col gap-2 border-b py-6">
-          <Button className="w-full justify-start" variant={"default"}>
-            <Image src={"/home.svg"} height={16} width={16} alt={"ínicio"} />
-            <p>Ínicio</p>
+          <Button
+            onClick={() => setSheetIsOpen(false)}
+            className="w-full justify-start"
+            variant={"default"}
+            asChild
+          >
+            <Link href={"/"}>
+              <Image src={"/home.svg"} height={16} width={16} alt={"ínicio"} />
+              <p>Ínicio</p>
+            </Link>
           </Button>
 
           <Button asChild className="w-full justify-start" variant={"ghost"}>
