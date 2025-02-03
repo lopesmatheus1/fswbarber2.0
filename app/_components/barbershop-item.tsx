@@ -19,11 +19,11 @@ const BarbershopItem = ({
   name,
 }: BarbershopItemProps) => {
   return (
-    <Card className="relative min-w-[130px]">
-      <CardContent className="h-full p-2">
-        <div className="relative max-h-[160px] min-h-[130px] w-full">
+    <Card className="relative min-w-[130px] md:min-w-[240px] md:rounded-2xl">
+      <CardContent className="p-2 md:flex md:h-full md:flex-col md:justify-between">
+        <div className="relative min-h-[130px] w-full md:min-h-[160px] md:pb-0">
           <Image
-            className="rounded-sm object-cover"
+            className="rounded-sm object-cover md:rounded-xl"
             src={imageUrl}
             fill
             alt={""}
@@ -34,12 +34,16 @@ const BarbershopItem = ({
           </Badge>
         </div>
 
-        <div className="mt-2 truncate px-3 text-left">
-          <h2 className="text-sm font-semibold">{name}</h2>
-          <p className="text-xs text-muted-foreground">{address}</p>
+        <div className="mt-2 truncate px-3 text-left md:overflow-visible">
+          <h2 className="text-sm font-semibold md:text-base">{name}</h2>
+          <p className="text-xs text-muted-foreground md:text-sm">{address}</p>
         </div>
 
-        <Button asChild className="mt-3 w-full" variant={"secondary"}>
+        <Button
+          asChild
+          className="mt-3 w-full md:rounded-xl"
+          variant={"secondary"}
+        >
           <Link href={`/barbershop/${id}`}> Reservar</Link>
         </Button>
       </CardContent>
